@@ -33,6 +33,10 @@ public:
 
 	// TODO 4: Move body creation to 3 functions to create circles, rectangles and chains
 
+	void CreateCircle(float pos_x, float pos_y, int rad);
+	void CreateRectangle(float pos_x, float pos_y, int w, int h, int dens);
+	
+
 private:
 
 	bool debug;

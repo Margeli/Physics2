@@ -63,32 +63,23 @@ update_status ModulePhysics::PreUpdate()
 update_status ModulePhysics::PostUpdate()
 {
 	// On space bar press, create a circle on mouse position
-	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		b2BodyDef body;
-		body.type = b2_dynamicBody;
-		float radius = PIXEL_TO_METERS(25);
-		body.position.Set(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()));
-
-		b2Body* b = world->CreateBody(&body);
-
-		b2CircleShape shape;
-		shape.m_radius = radius;
-		b2FixtureDef fixture;
-		fixture.shape = &shape;
-
-		b->CreateFixture(&fixture);
+		CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(),25);
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
-	{
-		// TODO 1: When pressing 2, create a box on the mouse position
+	{	// TODO 1: When pressing 2, create a box on the mouse position
+
+		CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(),25, 25, 1.0f);
 
 		// TODO 2: To have the box behave normally, set fixture's density to 1.0f
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
 	{
+		
+
 		// TODO 3: Create a chain shape using those vertices
 		// remember to convert them from pixels to meters!
 		/*
@@ -105,8 +96,61 @@ update_status ModulePhysics::PostUpdate()
 			20, 16,
 			-25, 13,
 			-9, 72
+		};*/
+		// Pivot 0, 0
+		int rick_head[50] = {
+			75, 32,
+			89, 3,
+			95, 39,
+			112, 35,
+			105, 61,
+			117, 67,
+			110, 74,
+			111, 100,
+			103, 106,
+			101, 117,
+			107, 121,
+			85, 149,
+			63, 148,
+			46, 133,
+			36, 137,
+			41, 126,
+			23, 125,
+			31, 115,
+			9, 102,
+			30, 91,
+			1, 77,
+			30, 63,
+			13, 36,
+			42, 38,
+			42, 0
 		};
-		*/
+		
+
+		b2BodyDef body;
+		body.type = b2_dynamicBody;
+		
+		body.position.Set(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY())); //Given radius, pos & type to a body def
+
+		b2Body* b = world->CreateBody(&body); //Creates body inside world with body def
+
+		b2Vec2 vec[50];
+		int j = 0;
+		for (int i = 0; i < 50; i+=2) {
+			
+			vec[j].Set(PIXEL_TO_METERS(rick_head[i]),PIXEL_TO_METERS(rick_head[i + 1]));
+			j++;
+		}
+		b2ChainShape shape;
+		shape.CreateLoop(vec, 25);
+	
+		b2FixtureDef fixture;
+		fixture.shape = &shape;
+		fixture.density = 1.0f;
+
+		b->CreateFixture(&fixture);		
+		
+		
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -200,4 +244,41 @@ bool ModulePhysics::CleanUp()
 	delete world;
 
 	return true;
+}
+
+void ModulePhysics::CreateCircle(float pos_x, float pos_y,int rad){
+	
+	b2BodyDef body;
+	body.type = b2_dynamicBody;
+	float radius = PIXEL_TO_METERS(rad);
+	body.position.Set(PIXEL_TO_METERS(pos_x), PIXEL_TO_METERS(pos_y));
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2CircleShape shape;
+	shape.m_radius = radius;
+	b2FixtureDef fixture;
+	fixture.shape = &shape;
+
+	b->CreateFixture(&fixture);
+
+}
+void ModulePhysics::CreateRectangle(float pos_x, float pos_y, int w, int h, int dens) {
+
+	b2BodyDef body;
+	body.type = b2_dynamicBody;
+	float width = PIXEL_TO_METERS(w);
+	float height = PIXEL_TO_METERS(h);
+	body.position.Set(PIXEL_TO_METERS(pos_x), PIXEL_TO_METERS(pos_y)); //Given radius, pos & type to a body def
+
+	b2Body* b = world->CreateBody(&body); //Creates body inside world with body def
+
+	b2PolygonShape shape;
+
+	shape.SetAsBox(width, height);
+	b2FixtureDef fixture;
+	fixture.shape = &shape;
+	fixture.density = dens;
+
+	b->CreateFixture(&fixture);
 }

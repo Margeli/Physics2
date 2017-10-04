@@ -29,7 +29,7 @@ bool ModulePhysics::Start()
 
 	world = new b2World(b2Vec2(GRAVITY_X, -GRAVITY_Y));
 	// TODO 3: You need to make ModulePhysics class a contact listener
-
+	world->SetContactListener(this);
 	// big static circle as "ground" in the middle of the screen
 	int x = SCREEN_WIDTH / 2;
 	int y = SCREEN_HEIGHT / 1.5f;
@@ -285,6 +285,10 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 	return ret;
 }
 
+void ModulePhysics::BeginContact(b2Contact*  ) {
+	LOG("Collision!!");
+
+}
 // TODO 3
 
 // TODO 7: Call the listeners that are not NULL

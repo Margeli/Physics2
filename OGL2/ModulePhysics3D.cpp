@@ -6,6 +6,17 @@
 // TODO 1: ...and the 3 libraries based on how we compile (Debug or Release)
 // use the _DEBUG preprocessor define
 
+#include "Bullet/include/btBulletDynamicsCommon.h"
+#ifdef _DEBUG
+#pragma comment(lib, "Bullet/libx86/BulletCollision_debug.lib")
+#pragma comment(lib, "Bullet/libx86/BulletDynamics_debug.lib")
+#pragma comment(lib, "Bullet/libx86/LinearMath_debug.lib")
+#else
+#pragma comment(lib, "Bullet/libx86/BulletCollision.lib")
+#pragma comment(lib, "Bullet/libx86/BulletDynamics.lib")
+#pragma comment(lib, "Bullet/libx86/LinearMath.lib")
+#endif
+
 ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	debug_draw = NULL;
@@ -13,17 +24,28 @@ ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(
 
 	// TODO 2: Create collision configuration, dispacher
 	// broad _phase and solver
+	collisionConfiguration = new btDefaultCollisionConfiguration;
+	dispatcher= new btCollisionDispatcher(collisionConfiguration);
+	pairCache = new btDbvtBroadphase;
+	constraintSolver = new 	btSequentialImpulseConstraintSolver;
+	
 
+
+	
 	// Uncomment this to enable debug drawer
-	//debug_draw = new DebugDrawer();
+	debug_draw = new DebugDrawer();
 }
 
 // Destructor
 ModulePhysics3D::~ModulePhysics3D()
 {
 	delete debug_draw;
-
+	delete collisionConfiguration;
+	delete dispatcher;
+	delete pairCache;
+	delete constraintSolver;
 	// TODO 2: and destroy them!
+
 
 }
 
@@ -34,9 +56,10 @@ bool ModulePhysics3D::Start()
 
 	// TODO 3: Create the world and set default gravity
 	// Have gravity defined in a macro!
-
-	// Uncomment this line to have the world use our debug drawer
-	// world->setDebugDrawer(debug_draw);
+	world= new btDiscreteDynamicsWorld(dispatcher, pairCache, constraintSolver, collisionConfiguration);
+	world->setGravity(GRAVITY);
+	
+	world->setDebugDrawer(debug_draw);
 
 	{
 		// TODO 5: Create a big rectangle as ground

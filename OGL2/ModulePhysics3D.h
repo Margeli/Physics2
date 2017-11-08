@@ -25,9 +25,15 @@ private:
 	bool debug;
 
 	DebugDrawer* debug_draw;
+
+	btCollisionConfiguration* collisionConfiguration;
+	btDbvtBroadphase* pairCache;
+	btCollisionDispatcher*  dispatcher;
+	btSequentialImpulseConstraintSolver* constraintSolver;
+	btDiscreteDynamicsWorld* world;
 };
 
-/*
+
 // Uncomment the debug Drawer once you finish TODO 4
 class DebugDrawer : public btIDebugDraw
 {
@@ -46,4 +52,3 @@ public:
 	Line line;
 	Primitive point;
 };
-*/
